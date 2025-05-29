@@ -19,6 +19,8 @@ public class Main {
 		final String listCbtUrl = domain + "/category/정보처리기사";
 
 		try {
+
+			//시험 회차별 링크 수집
 			Document listPage = Jsoup.connect(listCbtUrl).get();
 			Elements links = listPage.select("a[href^=/exam/]");
 			List<String> examUrls = new ArrayList<>();
@@ -26,7 +28,45 @@ public class Main {
 				String relativeUrl = link.attr("href");
 				String fullUrl = domain + relativeUrl;
 				examUrls.add(fullUrl);
-				System.out.println("찾은 시험 링크: " + fullUrl);
+			}
+
+			for (String examUrl : examUrls) {
+				Document examPage = Jsoup.connect(examUrl).get();
+
+				Elements questions = examPage.select("div.exam-box");
+
+				for (Element question : questions) {
+					// 문제 제목
+					String fullTitle = question.selectFirst("p.exam-title").text();
+					String title = fullTitle.replaceFirst("^\\d+\\.", "").trim();
+
+					// 보기들
+					Elements choices = question.select("ol.circlednumbers > li");
+					String[] options = new String[choices.size()];
+					String answer = "";
+					int answerIndex = -1;
+
+					for (int i = 0; i < choices.size(); i++) {
+						Element choice = choices.get(i);
+						options[i] = choice.text();
+						if (choice.hasClass("correct")) {
+							answer = i + "번 " + choice.text();
+						}
+					}
+
+					String explanation = "";
+					Elements replies = question.select("li.reply-item");
+					for (Element reply : replies) {
+						String info = reply.attr("data-info");
+						if (info.contains("depth:0")) {
+							Element comment = reply.selectFirst("div.reply-comment");
+							if (comment != null) {
+								explanation = comment.text();
+								break; // 첫 번째 해설만 사용
+							}
+						}
+					}
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
