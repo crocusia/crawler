@@ -8,8 +8,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-//TIP 코드를 <b>실행</b>하려면 <shortcut actionId="Run"/>을(를) 누르거나
-// 에디터 여백에 있는 <icon src="AllIcons.Actions.Execute"/> 아이콘을 클릭하세요.
 public class Main {
 	public static void main(String[] args) {
 
@@ -30,41 +28,20 @@ public class Main {
 				examUrls.add(fullUrl);
 			}
 
+			List<ParsedQuiz> quizzes = new ArrayList<>();
+
 			for (String examUrl : examUrls) {
 				Document examPage = Jsoup.connect(examUrl).get();
+				Elements elements = examPage.select(".exam-class-title, .exam-box");
 
-				Elements questions = examPage.select("div.exam-box");
-
-				for (Element question : questions) {
-					// 문제 제목
-					String fullTitle = question.selectFirst("p.exam-title").text();
-					String title = fullTitle.replaceFirst("^\\d+\\.", "").trim();
-
-					// 보기들
-					Elements choices = question.select("ol.circlednumbers > li");
-					String[] options = new String[choices.size()];
-					String answer = "";
-					int answerIndex = -1;
-
-					for (int i = 0; i < choices.size(); i++) {
-						Element choice = choices.get(i);
-						options[i] = choice.text();
-						if (choice.hasClass("correct")) {
-							answer = i + "번 " + choice.text();
-						}
-					}
-
-					String explanation = "";
-					Elements replies = question.select("li.reply-item");
-					for (Element reply : replies) {
-						String info = reply.attr("data-info");
-						if (info.contains("depth:0")) {
-							Element comment = reply.selectFirst("div.reply-comment");
-							if (comment != null) {
-								explanation = comment.text();
-								break; // 첫 번째 해설만 사용
-							}
-						}
+				String currentSubject = "과목";
+				for (Element el : elements) {
+					if (el.hasClass("exam-class-title")) {
+						currentSubject = el.text().trim();
+					} else if (el.hasClass("exam-box")) {
+						ParsedQuiz quiz = ParsedQuiz.parseQuestion(el);
+						quiz.subject = currentSubject;
+						quizzes.add(quiz);
 					}
 				}
 			}
