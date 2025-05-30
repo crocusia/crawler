@@ -1,16 +1,17 @@
 package com.example;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ParsedQuiz {
 	// String subject;
 	String question; //문제
-	String choices; //객관식 보기
+	String choices = ""; //객관식 보기
 	String answer; //딥뱐
 	String commentary; //해설
+
+	public ParsedQuiz() {
+	}
 
 	public static ParsedQuiz parseQuiz(Element box) {
 		ParsedQuiz pq = new ParsedQuiz();
@@ -21,7 +22,7 @@ public class ParsedQuiz {
 		Elements liItems = box.select("ol.circlednumbers > li");
 		for (int i = 0; i < liItems.size(); i++) {
 			String choiceText = liItems.get(i).text();
-			pq.choices += choiceText;
+			pq.choices += (i + 1) + "." + choiceText + "/";
 			if (liItems.get(i).hasClass("correct")) {
 				pq.answer = (i + 1) + "." + choiceText;
 			}
@@ -39,6 +40,39 @@ public class ParsedQuiz {
 		}
 
 		return pq;
+	}
+
+	//getter & setter
+	public String getQuestion() {
+		return question;
+	}
+
+	public void setQuestion(String question) {
+		this.question = question;
+	}
+
+	public String getChoices() {
+		return choices;
+	}
+
+	public void setChoices(String choices) {
+		this.choices = choices;
+	}
+
+	public String getAnswer() {
+		return answer;
+	}
+
+	public void setAnswer(String answer) {
+		this.answer = answer;
+	}
+
+	public String getCommentary() {
+		return commentary;
+	}
+
+	public void setCommentary(String commentary) {
+		this.commentary = commentary;
 	}
 
 	// public void printQuestion(){
