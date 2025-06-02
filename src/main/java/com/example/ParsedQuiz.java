@@ -6,7 +6,7 @@ import org.jsoup.select.Elements;
 public class ParsedQuiz {
 	// String subject;
 	String question; //문제
-	String choices = ""; //객관식 보기
+	String choice = ""; //객관식 보기
 	String answer; //딥뱐
 	String commentary; //해설
 
@@ -22,7 +22,7 @@ public class ParsedQuiz {
 		Elements liItems = box.select("ol.circlednumbers > li");
 		for (int i = 0; i < liItems.size(); i++) {
 			String choiceText = liItems.get(i).text();
-			pq.choices += (i + 1) + "." + choiceText + "/";
+			pq.choice += (i + 1) + "." + choiceText + "/";
 			if (liItems.get(i).hasClass("correct")) {
 				pq.answer = (i + 1) + "." + choiceText;
 			}
@@ -51,12 +51,12 @@ public class ParsedQuiz {
 		this.question = question;
 	}
 
-	public String getChoices() {
-		return choices;
+	public String getChoice() {
+		return choice;
 	}
 
-	public void setChoices(String choices) {
-		this.choices = choices;
+	public void setChoice(String choices) {
+		this.choice = choices;
 	}
 
 	public String getAnswer() {
