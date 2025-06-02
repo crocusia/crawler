@@ -8,4 +8,4 @@
 
 - 크롤링 데이터:
   - quizzes.json : 8개의 회차에 대한 문제 (800개)
-  - cleaned_quizees.json : ai가 중복(54개)을 제거한 문제(746개)
+  - cleaned_quizees.json : ai가 중복(40개)을 제거한 문제(760개)
