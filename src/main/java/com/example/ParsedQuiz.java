@@ -51,11 +51,11 @@ public class ParsedQuiz {
 		this.question = question;
 	}
 
-	public String getChoices() {
+	public String getChoice() {
 		return choice;
 	}
 
-	public void setChoices(String choices) {
+	public void setChoice(String choices) {
 		this.choice = choices;
 	}
 
